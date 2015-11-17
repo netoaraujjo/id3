@@ -10,13 +10,27 @@ import copy
 from id3 import *
 
 class Application(tk.Frame):
+    """
+    Classe que implementa a interface grafica da aplicacao ID3
+    """
 
     def __init__(self, master=None):
+
+        #Inicializa o Frame
         tk.Frame.__init__(self, master)
+        
+        # Seta a organizacao da janela do tipo Grid
         self.grid()
+
+        # Chama a funcao para criar os botoes
         self.create_buttons()
 
     def create_buttons(self):
+        """
+        Funcao que cria os botoes no Frame
+        """
+
+        # Cria o botao abrir arquivo
         tk.Button(self, text='Abrir arquivo...', command=self.open_file).grid(column = 0, row = 0)
         
         # Define as opcoes para abrir um arquivo
@@ -27,10 +41,14 @@ class Application(tk.Frame):
         options['parent'] = root
         options['title'] = 'Escolha o arquivo de entrada'
 
+        # Cria o botao executar id3
         tk.Button(self, text='Executar ID3...', command=self.execute_id3).grid(column = 1, row = 0)
 
 
-    def set_widgets(self):
+    def create_table(self):
+        """
+        Funcao que cria a tabela no Frame
+        """
 
         # Inicia o Treeview com as seguintes colunas:
         self.dataCols = ('Atributos', 'Remover')
@@ -55,12 +73,13 @@ class Application(tk.Frame):
 
     def open_file(self):
         """
-        Abre um File Dialog que retorna o nome do arquivo.
+        Abre um File Dialog que retorna o nome do arquivo e chama a funcao para criar a tabela.
         """
-        # get filename
+
+        # Abre o FileDialog e recebe o nome do arquivo escolhido
         filename = filedialog.askopenfilename(**self.file_opt)
 
-        # Verifica a abertura do arquivo
+        # Verifica se o arquivo vou escolhido
         if filename:
             fm = FileManager()
             # Le os dados de entrada a partir de um arquivo csv
@@ -75,13 +94,17 @@ class Application(tk.Frame):
             # Obtemos nomes de cada atributo
             self.attributes = Matrix.extract_attributes(examples)
 
-            self.set_widgets()
+            # Chama a funcao para criar a tabela
+            self.create_table()
 
     def execute_id3(self):
+        """
+        Funcao que executa o algoritmo id3
+        """
+        
         print("Executar!")
 
 if __name__ == '__main__':
     root = tk.Tk()
-
     app = Application(master=root)
     app.mainloop()
