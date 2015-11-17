@@ -25,52 +25,6 @@ class Application(tk.Frame):
         # Chama a funcao para criar os botoes
         self.create_buttons()
 
-    def create_buttons(self):
-        """
-        Funcao que cria os botoes no Frame
-        """
-
-        # Cria o botao abrir arquivo
-        tk.Button(self, text='Abrir arquivo...', command=self.open_file).grid(column = 0, row = 0)
-        
-        # Define as opcoes para abrir um arquivo
-        self.file_opt = options = {}
-        options['defaultextension'] = '.csv'
-        options['filetypes'] = [('all files', '.*'), ('csv files', '.csv')]
-        options['initialdir'] = 'C:\\'
-        options['parent'] = root
-        options['title'] = 'Escolha o arquivo de entrada'
-
-        # Cria o botao executar id3
-        tk.Button(self, text='Executar ID3...', command=self.execute_id3).grid(column = 1, row = 0)
-
-
-    def create_table(self):
-        """
-        Funcao que cria a tabela no Frame
-        """
-
-        # Inicia o Treeview com as seguintes colunas:
-        self.dataCols = ('Atributos', 'Remover')
-        self.tree = ttk.Treeview(columns=self.dataCols, show='headings')
-        self.tree.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
-
-        # Barras de rolagem
-        ysb = ttk.Scrollbar(orient=tk.VERTICAL, command=self.tree.yview)
-        xsb = ttk.Scrollbar(orient=tk.HORIZONTAL, command=self.tree.xview)
-        self.tree['yscroll'] = ysb.set
-        self.tree['xscroll'] = xsb.set
-        ysb.grid(row=1, column=1, sticky=tk.N + tk.S)
-        xsb.grid(row=2, column=0, sticky=tk.E + tk.W)
-
-        # Define o textos do cabeçalho (nome em maiúsculas)
-        for c in self.dataCols:
-            self.tree.heading(c, text=c.title())
-
-        # Insere cada item dos dados
-        for item in self.attributes:
-            self.tree.insert('', 'end', values=item)
-
     def open_file(self):
         """
         Abre um File Dialog que retorna o nome do arquivo e chama a funcao para criar a tabela.
@@ -89,18 +43,91 @@ class Application(tk.Frame):
             self.examples = copy.deepcopy(file_content)
 
             # Remove as colunas fornecidas na lista
-            Matrix.remove_columns(examples, [0])
+            Matrix.remove_columns(self.examples, [0])
 
             # Obtemos nomes de cada atributo
-            self.attributes = Matrix.extract_attributes(examples)
+            self.attributes = Matrix.get_attributes(self.examples)
 
             # Chama a funcao para criar a tabela
             self.create_table()
+
+
+    def create_buttons(self):
+        """
+        Funcao que cria os botoes no Frame
+        """
+
+        # Cria o botao abrir arquivo
+        tk.Button(self, text='Abrir arquivo...', command=self.open_file).grid(column = 0, row = 0)
+        
+        # Define as opcoes para abrir um arquivo
+        self.file_opt = options = {}
+        options['defaultextension'] = '.csv'
+        options['filetypes'] = [('all files', '.*'), ('csv files', '.csv')]
+        options['initialdir'] = 'C:\\'
+        options['parent'] = root
+        options['title'] = 'Escolha o arquivo de entrada'
+
+        # Cria o botao para remover atributos da tabela
+        tk.Button(self, text='Remover Atributo...', command=self.remove_attrib).grid(column = 1, row = 0)
+
+
+        # Cria o botao executar id3
+        tk.Button(self, text='Executar ID3...', command=self.execute_id3).grid(column = 2, row = 0)
+
+
+    def create_table(self):
+        """
+        Funcao que cria a tabela no Frame
+        """
+
+        # Inicia o Treeview com as seguintes colunas:
+        self.dataCols = ('Atributos', '')
+        self.tree = ttk.Treeview(columns=self.dataCols, show='headings')
+        self.tree.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
+
+        # Barras de rolagem
+        ysb = ttk.Scrollbar(orient=tk.VERTICAL, command=self.tree.yview)
+        xsb = ttk.Scrollbar(orient=tk.HORIZONTAL, command=self.tree.xview)
+        self.tree['yscroll'] = ysb.set
+        self.tree['xscroll'] = xsb.set
+        ysb.grid(row=1, column=2, sticky=tk.N + tk.S)
+        xsb.grid(row=2, column=0, sticky=tk.E + tk.W)
+
+        # Define o textos do cabeçalho (nome em maiúsculas)
+        for c in self.dataCols:
+            self.tree.heading(c, text=c.title())
+
+        # Insere cada item dos dados
+        for item in self.attributes:
+            self.tree.insert('', 'end', values=item)
+
+
+    def remove_attrib(self):
+        """
+        Remover atributo da tabela
+        """
+        checked = (self.tree.selection()[0])[1:]
+        cr = int(checked)-1
+
+        # Remove as colunas fornecidas na lista
+        Matrix.remove_columns(self.examples, [cr])
+
+        # Obtemos nomes de cada atributo
+        self.attributes = Matrix.get_attributes(self.examples)
+
+        # Chama a funcao para criar a tabela
+        self.create_table()
+
+
 
     def execute_id3(self):
         """
         Funcao que executa o algoritmo id3
         """
+        
+        # Remove os atributos
+        Matrix.extract_attributes(self.examples)
 
         # configura o atributo alvo como sendo a ultima coluna (so para testes)
         target = len(self.examples[0]) - 1
