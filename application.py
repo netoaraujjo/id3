@@ -86,7 +86,7 @@ class Application(tk.Frame):
             file_content = fm.read_csv(filename)
 
             # Clona os dados de entrada
-            examples = copy.deepcopy(file_content)
+            self.examples = copy.deepcopy(file_content)
 
             # Remove as colunas fornecidas na lista
             Matrix.remove_columns(examples, [0])
@@ -101,7 +101,16 @@ class Application(tk.Frame):
         """
         Funcao que executa o algoritmo id3
         """
-        
+
+        # configura o atributo alvo como sendo a ultima coluna (so para testes)
+        target = len(self.examples[0]) - 1
+
+        # Cria instancia da classe ID3
+        id3 = ID3(self.examples, self.attributes, target)
+
+        # Executa o algoritmo
+        id3.execute()
+
         print("Executar!")
 
 if __name__ == '__main__':
