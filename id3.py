@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from matrix import *
+from node import *
 import math
 
 class ID3:
@@ -17,6 +18,14 @@ class ID3:
 
 		for i in self.occurrences:
 			print(i)
+
+		print('\n')
+
+		# Testando Node
+		for index, at in enumerate(attributes):
+			node = Node(at)
+			node.setChildrens(self.addChildrens(self.occurrences, index))
+			print(node)
 	
 
 	def execute(self):
@@ -32,3 +41,14 @@ class ID3:
 			proportion = float(occurrence) / self.total_cases
 			entropy += -(proportion) * math.log(proportion, 2)
 		return entropy
+
+	def addChildrens(self, occurrences, attribute_index):
+		childrens = []
+
+		for k in occurrences[attribute_index].keys():
+			node = Node()
+			key = {}
+			key[k] = node
+			childrens.append(key)
+
+		return childrens
