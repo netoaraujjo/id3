@@ -28,6 +28,15 @@ class Matrix:
 		matrix.pop(0)
 		return attributes
 
+	@staticmethod
+	def get_attributes(matrix):
+		"""
+		Retorna a primeira linha, que contem os nomes dos atributos 
+		retornando-os na forma de uma lista. A matriz original nao e alterada
+		"""
+		attributes = matrix[0]
+		return attributes
+
 
 	@staticmethod
 	def occurrence_count(matrix):
