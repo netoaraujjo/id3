@@ -4,26 +4,32 @@
 from file_manager import *
 from matrix import *
 import copy
-import id3
+from id3 import *
 
 def main():
 	fm = FileManager()
 
-	file_content = fm.read_csv("/home/neto/weather.csv")
+	# Le os dados de entrada a partir de um arquivo csv
+	file_content = fm.read_csv("emprestimo.csv")
 
-	matrix = copy.deepcopy(file_content)
+	# Clona os dados de entrada
+	examples = copy.deepcopy(file_content)
 
-	Matrix.remove_columns(matrix, [1, 3])
+	# Remove as colunas fornecidas na lista
+	Matrix.remove_columns(examples, [0])
 
-	print("file_content:", id(file_content))
-	for f in file_content:
-		print(f)
+	# Obtemos nomes de cada atributo
+	attributes = Matrix.extract_attributes(examples)
+	
+	# configura o atributo alvo como sendo a ultima coluna (so para testes)
+	target = len(examples[0]) - 1
 
-	print("")
-	print("matrix:", id(matrix))
-	for m in matrix:
-		print(m)
+	# Cria instancia da classe ID3
+	id3 = ID3(examples, attributes, target)
 
+	# Executa o algoritmo
+	id3.execute()
+	
 
 if __name__ == '__main__':
 	main()

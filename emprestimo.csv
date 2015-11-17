@@ -1,0 +1,15 @@
+caso,montante,idade,salario,conta,emprestimo
+1,medio,senior,baixo,sim,nao
+2,medio,senior,baixo,nao,nao
+3,baixo,senior,baixo,sim,sim
+4,alto,media,baixo,sim,sim
+5,alto,jovem,alto,sim,sim
+6,alto,jovem,alto,nao,nao
+7,baixo,jovem,alto,nao,sim
+8,medio,media,baixo,sim,nao
+9,medio,jovem,alto,sim,sim
+10,alto,media,alto,sim,sim
+11,medio,media,alto,nao,sim
+12,baixo,jovem,baixo,nao,sim
+13,baixo,senior,alto,sim,sim
+14,alto,media,baixo,nao,nao
