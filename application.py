@@ -107,13 +107,16 @@ class Application(tk.Frame):
         """
         Remover atributo da tabela
         """
+        # Identifica o atributo selecionado para remocao
         checked = (self.tree.selection()[0])[1:]
+
+        # Identifica a posicao do atributo na matriz
         cr = int(checked)-1
 
-        # Remove as colunas fornecidas na lista
+        # Remove a coluna fornecidas na lista
         Matrix.remove_columns(self.examples, [cr])
 
-        # Obtemos nomes de cada atributo
+        # Obter os nomes dos atributos restantes
         self.attributes = Matrix.get_attributes(self.examples)
 
         # Chama a funcao para criar a tabela
@@ -125,7 +128,7 @@ class Application(tk.Frame):
         """
         Funcao que executa o algoritmo id3
         """
-        
+
         # Remove os atributos
         Matrix.extract_attributes(self.examples)
 
