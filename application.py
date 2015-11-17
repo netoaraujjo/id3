@@ -2,46 +2,86 @@
 # -*- coding: utf-8 -*-
 
 import tkinter as tk
+import tkinter.ttk as ttk
 from tkinter import filedialog
 from file_manager import *
+from matrix import *
+import copy
+from id3 import *
 
 class Application(tk.Frame):
-	"""
-	Application e a classe responsavel pela Interface do ID3
-	"""
 
-	def __init__(self, root):
+    def __init__(self, master=None):
+        tk.Frame.__init__(self, master)
+        self.grid()
+        self.create_buttons()
 
-		tk.Frame.__init__(self, root)
+    def create_buttons(self):
+        tk.Button(self, text='Abrir arquivo...', command=self.open_file).grid(column = 0, row = 0)
+        
+        # Define as opcoes para abrir um arquivo
+        self.file_opt = options = {}
+        options['defaultextension'] = '.csv'
+        options['filetypes'] = [('all files', '.*'), ('csv files', '.csv')]
+        options['initialdir'] = 'C:\\'
+        options['parent'] = root
+        options['title'] = 'Escolha o arquivo de entrada'
 
-		# Define Buttons
-		tk.Button(self, text='Abrir arquivo...', command=self.open_file).pack()
-		
-		# Define as opcoes para abrir um arquivo
-		self.file_opt = options = {}
-		options['defaultextension'] = '.csv'
-		options['filetypes'] = [('all files', '.*'), ('csv files', '.csv')]
-		options['initialdir'] = 'C:\\'
-		options['parent'] = root
-		options['title'] = 'Escolha o arquivo de entrada'
+        tk.Button(self, text='Executar ID3...', command=self.execute_id3).grid(column = 1, row = 0)
 
-	def open_file(self):
-		"""
-		Abre um File Dialog que retorna o nome do arquivo.
-		"""
-		# get filename
-		filename = filedialog.askopenfilename(**self.file_opt)
 
-		# open file on your own
-		if filename:
-		  	fm = FileManager()
+    def set_widgets(self):
 
-		# Le os dados de entrada a partir de um arquivo csv
-		file_content = fm.read_csv(filename)
-		print (file_content)
+        # Inicia o Treeview com as seguintes colunas:
+        self.dataCols = ('Atributos', 'Remover')
+        self.tree = ttk.Treeview(columns=self.dataCols, show='headings')
+        self.tree.grid(row=1, column=0, sticky=tk.N + tk.S + tk.W + tk.E)
 
-if __name__=='__main__':
-	root = tk.Tk()
-	Application(root).pack()
-	root.mainloop()
+        # Barras de rolagem
+        ysb = ttk.Scrollbar(orient=tk.VERTICAL, command=self.tree.yview)
+        xsb = ttk.Scrollbar(orient=tk.HORIZONTAL, command=self.tree.xview)
+        self.tree['yscroll'] = ysb.set
+        self.tree['xscroll'] = xsb.set
+        ysb.grid(row=1, column=1, sticky=tk.N + tk.S)
+        xsb.grid(row=2, column=0, sticky=tk.E + tk.W)
 
+        # Define o textos do cabeçalho (nome em maiúsculas)
+        for c in self.dataCols:
+            self.tree.heading(c, text=c.title())
+
+        # Insere cada item dos dados
+        for item in self.attributes:
+            self.tree.insert('', 'end', values=item)
+
+    def open_file(self):
+        """
+        Abre um File Dialog que retorna o nome do arquivo.
+        """
+        # get filename
+        filename = filedialog.askopenfilename(**self.file_opt)
+
+        # Verifica a abertura do arquivo
+        if filename:
+            fm = FileManager()
+            # Le os dados de entrada a partir de um arquivo csv
+            file_content = fm.read_csv(filename)
+
+            # Clona os dados de entrada
+            examples = copy.deepcopy(file_content)
+
+            # Remove as colunas fornecidas na lista
+            Matrix.remove_columns(examples, [0])
+
+            # Obtemos nomes de cada atributo
+            self.attributes = Matrix.extract_attributes(examples)
+
+            self.set_widgets()
+
+    def execute_id3(self):
+        print("Executar!")
+
+if __name__ == '__main__':
+    root = tk.Tk()
+
+    app = Application(master=root)
+    app.mainloop()
