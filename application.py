@@ -4,7 +4,12 @@
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import filedialog
+from tkinter import StringVar
+
 from file_manager import *
+
+from graphviz import Digraph
+
 from matrix import *
 import copy
 from id3 import *
@@ -48,6 +53,9 @@ class Application(tk.Frame):
             # Obtemos nomes de cada atributo
             self.attributes = Matrix.get_attributes(self.examples)
 
+            # Chama a funcao para criar o combobox
+            self.create_combo_box()
+
             # Chama a funcao para criar a tabela
             self.create_table()
 
@@ -71,9 +79,21 @@ class Application(tk.Frame):
         # Cria o botao para remover atributos da tabela
         tk.Button(self, text='Remover Atributo...', command=self.remove_attrib).grid(column = 1, row = 0)
 
-
         # Cria o botao executar id3
-        tk.Button(self, text='Executar ID3...', command=self.execute_id3).grid(column = 2, row = 0)
+        tk.Button(self, text='Executar ID3...', command=self.execute_id3).grid(column = 3, row = 0)
+
+        # Botao Temporario para gerar a arvore
+        tk.Button(self, text='Gerar Arvore...', command=self.create_decision_tree).grid(column = 4, row = 0)
+
+    def create_combo_box(self):
+        """
+        Cria a combobox para a escolha do atributo classe.
+        """
+        value = StringVar()
+        self.box = ttk.Combobox(self, textvariable=value, state='readonly')
+        self.box['values'] = self.attributes
+        self.box.current(0)
+        self.box.grid(column = 2, row = 0)
 
 
     def create_table(self):
@@ -91,7 +111,7 @@ class Application(tk.Frame):
         xsb = ttk.Scrollbar(orient=tk.HORIZONTAL, command=self.tree.xview)
         self.tree['yscroll'] = ysb.set
         self.tree['xscroll'] = xsb.set
-        ysb.grid(row=1, column=2, sticky=tk.N + tk.S)
+        ysb.grid(row=1, column=3, sticky=tk.N + tk.S)
         xsb.grid(row=2, column=0, sticky=tk.E + tk.W)
 
         # Define o textos do cabeçalho (nome em maiúsculas)
@@ -107,38 +127,60 @@ class Application(tk.Frame):
         """
         Remover atributo da tabela
         """
+        # Identifica o atributo selecionado para remocao
         checked = (self.tree.selection()[0])[1:]
+
+        # Identifica a posicao do atributo na matriz
         cr = int(checked)-1
 
-        # Remove as colunas fornecidas na lista
+        # Remove a coluna fornecidas na lista
         Matrix.remove_columns(self.examples, [cr])
 
-        # Obtemos nomes de cada atributo
+        # Obter os nomes dos atributos restantes
         self.attributes = Matrix.get_attributes(self.examples)
 
-        # Chama a funcao para criar a tabela
-        self.create_table()
+        # Chama a funcao para atualizar o combobox
+        self.create_combo_box()
 
+        # Chama a funcao para atualizar a tabela
+        self.create_table()
 
 
     def execute_id3(self):
         """
         Funcao que executa o algoritmo id3
         """
+
+        if not self.box.get():
+            print("Nao entrei!")
+
+            # Configura o atributo alvo escolhido na combobox
+            target = self.attributes.index(self.box.get())
+
+            # Remove os atributos
+            Matrix.extract_attributes(self.examples)
+
+            # Cria instancia da classe ID3
+            id3 = ID3(self.examples, self.attributes, target)
+
+            # Executa o algoritmo
+            id3.execute()
+
+    def create_decision_tree(self):
+        '''
+        Funcao que cria a arvore de decisao resultante do algoritmo id3
+        '''
         
-        # Remove os atributos
-        Matrix.extract_attributes(self.examples)
+        dot = Digraph(comment='The Round Table')
+        dot.node('A', 'King Arthur')
+        dot.node('B', 'Sir Bedevere the Wise')
+        dot.node('L', 'Sir Lancelot the Brave')
 
-        # configura o atributo alvo como sendo a ultima coluna (so para testes)
-        target = len(self.examples[0]) - 1
+        dot.edges(['AB', 'AL'])
+        dot.edge('B', 'L', constraint='false')
+        print(dot.source)
+        dot.render('arquivos_gerados/decision_tree', view=True)
 
-        # Cria instancia da classe ID3
-        id3 = ID3(self.examples, self.attributes, target)
-
-        # Executa o algoritmo
-        id3.execute()
-
-        print("Executar!")
 
 if __name__ == '__main__':
     root = tk.Tk()
