@@ -8,8 +8,6 @@ from tkinter import StringVar
 
 from file_manager import *
 
-from graphviz import Digraph
-
 from matrix import *
 import copy
 from id3 import *
@@ -81,9 +79,7 @@ class Application(tk.Frame):
 
         # Cria o botao executar id3
         tk.Button(self, text='Executar ID3...', command=self.execute_id3).grid(column = 3, row = 0)
-
-        # Botao Temporario para gerar a arvore
-        tk.Button(self, text='Gerar Arvore...', command=self.create_decision_tree).grid(column = 4, row = 0)
+        
 
     def create_combo_box(self):
         """
@@ -152,7 +148,6 @@ class Application(tk.Frame):
         """
 
         if not self.box.get():
-            print("Nao entrei!")
 
             # Configura o atributo alvo escolhido na combobox
             target = self.attributes.index(self.box.get())
@@ -165,21 +160,6 @@ class Application(tk.Frame):
 
             # Executa o algoritmo
             id3.execute()
-
-    def create_decision_tree(self):
-        '''
-        Funcao que cria a arvore de decisao resultante do algoritmo id3
-        '''
-        
-        dot = Digraph(comment='The Round Table')
-        dot.node('A', 'King Arthur')
-        dot.node('B', 'Sir Bedevere the Wise')
-        dot.node('L', 'Sir Lancelot the Brave')
-
-        dot.edges(['AB', 'AL'])
-        dot.edge('B', 'L', constraint='false')
-        print(dot.source)
-        dot.render('arquivos_gerados/decision_tree', view=True)
 
 
 if __name__ == '__main__':
