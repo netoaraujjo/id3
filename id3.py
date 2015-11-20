@@ -66,17 +66,13 @@ class ID3:
 		
 		# Se nao existirem exemplos ou atributos, retorna o valor mais comum
 		if not self.examples or (len(self.attributes) -1) <= 0: 
-			dot.node('A',self.attributes[self.target])
-			dot.attr('node', shape='plaintext')
-			dot.node('B', most_commun)
-			dot.edge('A', 'B', label="Valor mais comum:")
+			dot.attr('node', shape='doublecircle')
+			dot.node('A', "Most commun: " + most_commun)
 		
 		# Verifica se todos os exemplos possuem a mesma classificacao
 		elif values.count(values[0]) == len(values): 
-			dot.node('A',self.attributes[self.target])
-			dot.attr('node', shape='plaintext')
-			dot.node('B', values[0])
-			dot.edge('A', 'B', label=values[0])
+			dot.attr('node', shape='doublecircle')
+			dot.node('A', values[0])
 		
 		else:
 			print( "Deu sorte!")
