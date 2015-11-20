@@ -1,19 +1,6 @@
-// The Round Table
 digraph {
-	A [label=MONTANTE]
-	B [label=SALARIO]
-	C [label=CONTA]
+	A [label=emprestimo]
 	node [shape=plaintext]
-	D [label="não"]
-	E [label="não"]
-	F [label=sim]
-	G [label=sim]
-	H [label=sim]
-		A -> B [label=medio]
-		A -> F [label=baixo]
-		A -> C [label=alto]
-		B -> D [label=baixo]
-		B -> G [label=alto]
-		C -> E [label="não"]
-		C -> H [label=sim]
+	B [label=sim]
+		A -> B [label="Valor mais comum!"]
 }
