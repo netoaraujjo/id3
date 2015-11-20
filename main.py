@@ -10,7 +10,9 @@ def main():
 	fm = FileManager()
 
 	# Le os dados de entrada a partir de um arquivo csv
-	file_content = fm.read_csv("emprestimo.csv")
+	file_content = fm.read_csv("caso.csv")
+	#file_content = fm.read_csv("emprestimo.csv")
+
 
 	# Clona os dados de entrada
 	examples = copy.deepcopy(file_content)
