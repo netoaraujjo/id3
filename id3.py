@@ -13,16 +13,19 @@ class ID3:
 		"""
 		Construtor da classe ID3. Configura os parametros iniciais
 		"""
+
+		self.examples = examples
+		self.attributes = attributes
 		self.occurrences = Matrix.occurrence_count(examples)
 		self.total_cases = len(examples)
 		self.target = target
 
-		for i in self.occurrences:
-			print(i)
+		#for i in self.occurrences:
+			#print(i)
 
-		print('\n')
+		#print('\n')
 
-		self.create_decision_tree()
+		# self.create_decision_tree()
 
 
 		# for index, at in enumerate(attributes):
@@ -51,9 +54,39 @@ class ID3:
 
 	def execute(self):
 		"""Inicia a execucao do algoritmo"""
-		self.target_entropy = self.get_entropy(self.target)
-		print(self.target_entropy)
 
+		# Inicia o gerador da arvore
+		dot = Digraph()
+
+		# Lista de todos os valores do target
+		values = [value[self.target] for value in self.examples]
+
+		# Valor mais comum do target
+		most_commun = max(set(values), key=values.count)
+		
+		# Se nao existirem exemplos ou atributos, retorna o valor mais comum
+		if not self.examples or (len(self.attributes) -1) <= 0: 
+			dot.node('A',self.attributes[self.target])
+			dot.attr('node', shape='plaintext')
+			dot.node('B', most_commun)
+			dot.edge('A', 'B', label="Valor mais comum:")
+		
+		# Verifica se todos os exemplos possuem a mesma classificacao
+		elif values.count(values[0]) == len(values): 
+			dot.node('A',self.attributes[self.target])
+			dot.attr('node', shape='plaintext')
+			dot.node('B', values[0])
+			dot.edge('A', 'B', label=values[0])
+		
+		else:
+			print( "Deu sorte!")
+
+		#self.target_entropy = self.get_entropy(self.target)
+		#print(self.target_entropy)
+
+		
+		# Renderiza a arvore de decisao
+		dot.render('arquivos_gerados/decision_tree', view=True)
 
 	def get_entropy(self, attribute_index):
 

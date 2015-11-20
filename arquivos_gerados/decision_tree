@@ -1,9 +1,19 @@
 // The Round Table
 digraph {
-	A [label="King Arthur"]
-	B [label="Sir Bedevere the Wise"]
-	L [label="Sir Lancelot the Brave"]
-		A -> B
-		A -> L
-		B -> L [constraint=false]
+	A [label=MONTANTE]
+	B [label=SALARIO]
+	C [label=CONTA]
+	node [shape=plaintext]
+	D [label="não"]
+	E [label="não"]
+	F [label=sim]
+	G [label=sim]
+	H [label=sim]
+		A -> B [label=medio]
+		A -> F [label=baixo]
+		A -> C [label=alto]
+		B -> D [label=baixo]
+		B -> G [label=alto]
+		C -> E [label="não"]
+		C -> H [label=sim]
 }
