@@ -15,11 +15,11 @@ from id3 import *
 from decision_tree import *
 
 class Application(tk.Frame):
-    """
-    Classe que implementa a interface grafica da aplicacao ID3
-    """
+    """docstring for Application"""
+
 
     def __init__(self, master=None):
+        """Classe que implementa a interface grafica da aplicacao ID3"""
 
         #Inicializa o Frame
         tk.Frame.__init__(self, master)
@@ -30,10 +30,9 @@ class Application(tk.Frame):
         # Chama a funcao para criar os botoes
         self.create_buttons()
 
+
     def open_file(self):
-        """
-        Abre um File Dialog que retorna o nome do arquivo e chama a funcao para criar a tabela.
-        """
+        """Abre um File Dialog que retorna o nome do arquivo e chama a funcao para criar a tabela."""
 
         # Abre o FileDialog e recebe o nome do arquivo escolhido
         filename = filedialog.askopenfilename(**self.file_opt)
@@ -61,9 +60,7 @@ class Application(tk.Frame):
 
 
     def create_buttons(self):
-        """
-        Funcao que cria os botoes no Frame
-        """
+        """Funcao que cria os botoes no Frame"""
 
         # Cria o botao abrir arquivo
         tk.Button(self, text='Abrir arquivo...', command=self.open_file).grid(column = 0, row = 0)
@@ -87,9 +84,7 @@ class Application(tk.Frame):
 
 
     def create_combo_box(self):
-        """
-        Cria a combobox para a escolha do atributo classe.
-        """
+        """Cria a combobox para a escolha do atributo classe."""
         value = StringVar()
         self.box = ttk.Combobox(self, textvariable=value, state='readonly')
         self.box['values'] = self.attributes
@@ -98,9 +93,7 @@ class Application(tk.Frame):
 
 
     def create_table(self):
-        """
-        Funcao que cria a tabela no Frame
-        """
+        """Funcao que cria a tabela no Frame"""
 
         # Inicia o Treeview com as seguintes colunas:
         self.dataCols = ('Atributos', '')
@@ -125,9 +118,8 @@ class Application(tk.Frame):
 
 
     def remove_attrib(self):
-        """
-        Remover atributo da tabela
-        """
+        """Remover atributo da tabela"""
+        
         # Identifica o atributo selecionado para remocao
         checked = (self.tree.selection()[0])[1:]
 
@@ -148,13 +140,13 @@ class Application(tk.Frame):
 
 
     def execute_id3(self):
-        """
-        Funcao que executa o algoritmo id3
-        """
+        """Funcao que executa o algoritmo id3"""
+
         if self.box is None:
+            #Mensagem de erro gerada quando tentamos executar o algoritmo sem antes escolher o arquivo
             tk.messagebox.showwarning("Nenhum arquivo escolhido", "Escolha um arquvio para continuar!")
+
         elif self.box.get():
-            print("Executar!")
             # Configura o atributo alvo escolhido na combobox
             class_attribute = self.attributes.index(self.box.get())
 
@@ -169,8 +161,11 @@ class Application(tk.Frame):
 
             # Cria a arvore de decisao!
             decision_tree = DecisionTree(tree)
+
         else:
+            # Mensagem de erro gerada quando tentamos executar o algoritmo sem escolher o atributo classe
             tk.messagebox.showwarning("Atributo classe não escolhido", "Escolha o atributo classe para executar!")
+
 
 if __name__ == '__main__':
     root = tk.Tk()
