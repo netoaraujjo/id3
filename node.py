@@ -16,6 +16,10 @@ class Node:
 		return self.childrens
 
 
+	def get_label(self):
+		return self.label
+
+
 	def __str__(self):
 		node_str = self.label
 		return node_str
