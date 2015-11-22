@@ -5,6 +5,7 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter import filedialog
 from tkinter import StringVar
+from tkinter import messagebox
 
 from file_manager import *
 
@@ -78,6 +79,9 @@ class Application(tk.Frame):
         # Cria o botao para remover atributos da tabela
         tk.Button(self, text='Remover Atributo...', command=self.remove_attrib).grid(column = 1, row = 0)
 
+        # Inicializa a combobox como nulo
+        self.box = None
+
         # Cria o botao executar id3
         tk.Button(self, text='Executar ID3...', command=self.execute_id3).grid(column = 3, row = 0)
 
@@ -147,8 +151,9 @@ class Application(tk.Frame):
         """
         Funcao que executa o algoritmo id3
         """
-
-        if self.box.get():
+        if self.box is None:
+            tk.messagebox.showwarning("Nenhum arquivo escolhido", "Escolha um arquvio para continuar!")
+        elif self.box.get():
             print("Executar!")
             # Configura o atributo alvo escolhido na combobox
             class_attribute = self.attributes.index(self.box.get())
@@ -164,7 +169,8 @@ class Application(tk.Frame):
 
             # Cria a arvore de decisao!
             decision_tree = DecisionTree(tree)
-
+        else:
+            tk.messagebox.showwarning("Atributo classe não escolhido", "Escolha o atributo classe para executar!")
 
 if __name__ == '__main__':
     root = tk.Tk()
