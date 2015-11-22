@@ -20,6 +20,4 @@ class FileManager(object):
 			except Exception as e:
 				print("Nao foi possivel abrir o arquivo: %s" % ipt)
 				raise e
-			finally:
-				pass
 		

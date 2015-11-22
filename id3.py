@@ -1,194 +1,115 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import math
 from matrix import *
 from node import *
-import math
-from graphviz import Digraph
 
-class ID3:
+class ID3(object):
 	"""docstring for ID3"""
-	
-	def __init__(self, examples, attributes, target):
-		"""
-		Construtor da classe ID3. Configura os parametros iniciais
-		"""
+	def __init__(self):
+		super(ID3, self).__init__()
 
-		self.examples = examples
-		self.attributes = attributes
-		self.occurrences = Matrix.occurrence_count(examples)
-		self.total_cases = len(examples)
-		self.target = target
-
-		#for i in self.occurrences:
-			#print(i)
-
-		#print('\n')
-
-		# self.create_decision_tree()
-
-
-		# for index, at in enumerate(attributes):
-		# 	node = Node(at)
-
-		# 	childrens = self.addChildrens(self.occurrences, index)
-		# 	node.setChildrens(childrens)
-
-		# 	if index == 1:
-		# 		childrens[1]['senior'].setName('test')
-
-		# 	 	node1 = Node()
-		# 	 	key = {}
-		# 	 	childrensTest = []
-		# 	 	key['testArrest'] = node1
-		# 	 	childrensTest.append(key)
-		# 	 	childrens[1]['senior'].setChildrens(childrensTest)
-		# 	 	#print(childrens[1]['senior'])
-		# 	 	#print('(' + childrens[1]['senior'] + ')')
-				
-		# 	print(node)
-
-		# --------------------------------------------------------------------
-
-	
-
-	def execute(self):
-		"""Inicia a execucao do algoritmo"""
-
-		# Inicia o gerador da arvore
-		dot = Digraph()
-
-		# Lista de todos os valores do target
-		values = [value[self.target] for value in self.examples]
-
-		# Valor mais comum do target
-		most_commun = max(set(values), key=values.count)
-		
-		# Se nao existirem exemplos ou atributos, retorna o valor mais comum
-		if not self.examples or (len(self.attributes) -1) <= 0: 
-			dot.attr('node', shape='doublecircle')
-			dot.node('A', "Most commun: " + most_commun)
-		
-		# Verifica se todos os exemplos possuem a mesma classificacao
-		elif values.count(values[0]) == len(values): 
-			dot.attr('node', shape='doublecircle')
-			dot.node('A', values[0])
-		
+	def execute(self, examples, attributes, class_attribute):
+		Matrix.print_matrix(examples)
+		print(Matrix.get_attribute_values(examples, class_attribute))
+		if len(examples) == 0:
+			# majority_value = self.get_majority(examples, class_attribute)
+			node = Node("majority_value")
+			return node
+		elif len(Matrix.get_attribute_values(examples, class_attribute)) == 1:
+			label = list(Matrix.attribute_occurrence_count(examples, class_attribute).keys())[0]
+			node = Node(label)
+			print("retornando node com label:", label)
+			return node
+		elif len(attributes) == 0:
+			majority_value = self.get_majority(examples, class_attribute)
+			node = Node(majority_value)
+			return node
 		else:
-			print( "Deu sorte!")
+			best_attribute = self.get_best_attribute(examples, class_attribute, attributes)
+			node = Node(attributes[best_attribute])
+			# print(attributes[best_attribute])
 
-		#self.target_entropy = self.get_entropy(self.target)
-		#print(self.target_entropy)
+			# Matrix.print_matrix(examples)
 
+			if best_attribute < class_attribute:
+					class_attribute -= 1
+
+			for key, value in Matrix.attribute_occurrence_count(examples, best_attribute).items():
+				print(attributes[best_attribute], "=>", key)
+				new_examples = Matrix.remove_line(examples, best_attribute, key)
+				columns_to_remove = []
+				columns_to_remove.append(best_attribute)
+				new_examples = Matrix.remove_columns_2(new_examples, columns_to_remove)
+
+				node.add_children(key, self.execute(new_examples, Matrix.remove_attribute(attributes, best_attribute), class_attribute))
+			return node
+		# pass
 		
-		# Renderiza a arvore de decisao
-		dot.render('arquivos_gerados/decision_tree', view=True)
 
-	def get_entropy(self, attribute_index):
+	def get_best_attribute(self, examples, class_attribute, attributes):
+		"""Retorna o indice do atributo com maior ganho de informacao"""
+		gains = []
+		for attr_index, attribute in enumerate(attributes):
+			if attr_index != class_attribute:
+				gains.append(self.gain(attr_index, examples, class_attribute))
 
+		return gains.index(max(gains))
+
+
+	def get_entropy(self, examples, class_attribute):
+		"""Retorna a entropia total do conjunto"""
 		entropy = 0.0
-		for key, occurrence in self.occurrences[attribute_index].items():
-			proportion = float(occurrence) / self.total_cases
-			entropy += -(proportion) * math.log(proportion, 2)
+		total_cases = float(len(examples))
+
+		for key, occurrence in Matrix.attribute_occurrence_count(examples, class_attribute).items():
+			proportion = occurrence / total_cases
+			entropy -= proportion * math.log(proportion, 2)
+
 		return entropy
 
-	def addChildrens(self, occurrences, attribute_index):
-		childrens = []
 
-		for k in occurrences[attribute_index].keys():
-			node = Node()
-			key = {}
-			key[k] = node
-			childrens.append(key)
+	def get_entropy_per_attribute_value(self, examples, attribute_index, key, total_cases, class_attribute):
+		"""Retorna a entropia para um valor especifico de um determinado atributo"""
+		class_values = Matrix.get_attribute_values(examples, class_attribute)
 
-		return childrens
+		occurrence_per_attribute_value = {}
 
-	def create_decision_tree(self):
-		'''Funcao que cria a arvore de decisao resultante do algoritmo id3'''
-		dot = Digraph(comment='The Round Table')
-		
-		dot.node('A', 'MONTANTE')
-		dot.node('B', 'SALARIO')
-		dot.node('C', 'CONTA')
+		total_cases = float(total_cases)
 
-		dot.attr('node', shape='plaintext')
+		for class_value in class_values:
+			occurrence_per_attribute_value[class_value] = 0
 
-		dot.node('D', 'não')
-		dot.node('E', 'não')
-		dot.node('F', 'sim')
-		dot.node('G', 'sim')
-		dot.node('H', 'sim')
+		for line in examples:
+			if line[attribute_index] == key:
+				occurrence_per_attribute_value[line[class_attribute]] += 1
 
-		dot.edge('A', 'B', label='medio')
-		dot.edge('A', 'F', label='baixo')
-		dot.edge('A', 'C', label='alto')
+		entropy_per_value = 0.0
+		for occurrence_value in occurrence_per_attribute_value.values():
+			proportion = occurrence_value / total_cases
+			if proportion == 0.0: # log de 0 nao e definido
+				return 0.0
+			entropy_per_value -= (proportion) * math.log(proportion, 2)
+
+		return entropy_per_value
 
 
-		dot.edge('B', 'D', label='baixo')
-		dot.edge('B', 'G', label='alto')
+	def gain(self, attribute_index, examples, class_attribute):
+		"""Retorna o ganho de informacao para um determinado atributo"""
+		gain = self.get_entropy(examples, class_attribute)
+		total_cases = float(len(examples))
 
-		dot.edge('C', 'E', label='não')
-		dot.edge('C', 'H', label='sim')
+		for key, occurrence in Matrix.attribute_occurrence_count(examples, attribute_index).items():
+			value_entropy = self.get_entropy_per_attribute_value(examples, attribute_index, key, occurrence, class_attribute)
+			gain -= (occurrence / total_cases) * value_entropy
 
-		
-		#dot.edges(['AB', 'AL'])
-		print(dot.source)
-		dot.render('arquivos_gerados/decision_tree', view=True)
-
-
-
-'''
-        # Testando Node -----------------------------------------------------
-		raiz = Node('')
-		childrensRaiz = []
-
-		node1 = Node('SALARIO')
-		key1 = {}
-		key1['medio'] = node1
-		childrensRaiz.append(key1)
-
-		node2 = Node('sim')
-		key2 = {}
-		node2.setChildrens
-		key2['baixo'] = node2
-		childrensRaiz.append(key2)
-
-		node3 = Node('CONTA')
-		key3 = {}
-		key3['alto'] = node3
-		childrensRaiz.append(key3)
-
-		raiz.setChildrens(childrensRaiz)
-
-		childrens1 = []
-
-		node4 = Node('nao')
-		key4 = {}
-		key4['<= 990'] = node4
-		childrens1.append(key4)
-
-		node5 = Node('sim')
-		key5 = {}
-		key5['> 990'] = node5
-		childrens1.append(key5)
-
-		node1.setChildrens(childrens1)
+		return gain
 
 
-		childrens3 = []
-
-		node6 = Node('nao')
-		key6 = {}
-		key6['nao'] = node6
-		childrens3.append(key6)
-
-		node7 = Node('sim')
-		key7 = {}
-		key7['sim'] = node7
-		childrens3.append(key7)
-
-		node3.setChildrens(childrens3)
-
-		print(raiz)
-
-'''
+	def get_majority(self, examples, class_attribute):
+		"""Retorna o valor com maior ocorrencia do atributo classe"""
+		class_values = Matrix.attribute_occurrence_count(examples, class_attribute)
+		values = list(class_values.values())
+		max_index = values.index(max(values))
+		return list(class_values.keys())[max_index]
