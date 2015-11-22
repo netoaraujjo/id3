@@ -12,7 +12,7 @@ class ID3(object):
 
 	def execute(self, examples, attributes, class_attribute):
 		Matrix.print_matrix(examples)
-		print(Matrix.get_attribute_values(examples, class_attribute))
+		#print(Matrix.get_attribute_values(examples, class_attribute))
 		if len(examples) == 0:
 			# majority_value = self.get_majority(examples, class_attribute)
 			node = Node("majority_value")
@@ -20,7 +20,7 @@ class ID3(object):
 		elif len(Matrix.get_attribute_values(examples, class_attribute)) == 1:
 			label = list(Matrix.attribute_occurrence_count(examples, class_attribute).keys())[0]
 			node = Node(label)
-			print("retornando node com label:", label)
+			#print("retornando node com label:", label)
 			return node
 		elif len(attributes) == 0:
 			majority_value = self.get_majority(examples, class_attribute)
@@ -30,14 +30,12 @@ class ID3(object):
 			best_attribute = self.get_best_attribute(examples, class_attribute, attributes)
 			node = Node(attributes[best_attribute])
 			# print(attributes[best_attribute])
-
 			# Matrix.print_matrix(examples)
-
 			if best_attribute < class_attribute:
 					class_attribute -= 1
 
 			for key, value in Matrix.attribute_occurrence_count(examples, best_attribute).items():
-				print(attributes[best_attribute], "=>", key)
+				#print(attributes[best_attribute], "=>", key)
 				new_examples = Matrix.remove_line(examples, best_attribute, key)
 				columns_to_remove = []
 				columns_to_remove.append(best_attribute)
@@ -45,8 +43,7 @@ class ID3(object):
 
 				node.add_children(key, self.execute(new_examples, Matrix.remove_attribute(attributes, best_attribute), class_attribute))
 			return node
-		# pass
-		
+
 
 	def get_best_attribute(self, examples, class_attribute, attributes):
 		"""Retorna o indice do atributo com maior ganho de informacao"""
