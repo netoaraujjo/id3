@@ -11,6 +11,7 @@ from file_manager import *
 from matrix import *
 import copy
 from id3 import *
+from decision_tree import *
 
 class Application(tk.Frame):
     """
@@ -21,7 +22,7 @@ class Application(tk.Frame):
 
         #Inicializa o Frame
         tk.Frame.__init__(self, master)
-        
+
         # Seta a organizacao da janela do tipo Grid
         self.grid()
 
@@ -65,7 +66,7 @@ class Application(tk.Frame):
 
         # Cria o botao abrir arquivo
         tk.Button(self, text='Abrir arquivo...', command=self.open_file).grid(column = 0, row = 0)
-        
+
         # Define as opcoes para abrir um arquivo
         self.file_opt = options = {}
         options['defaultextension'] = '.csv'
@@ -79,7 +80,7 @@ class Application(tk.Frame):
 
         # Cria o botao executar id3
         tk.Button(self, text='Executar ID3...', command=self.execute_id3).grid(column = 3, row = 0)
-        
+
 
     def create_combo_box(self):
         """
@@ -147,19 +148,22 @@ class Application(tk.Frame):
         Funcao que executa o algoritmo id3
         """
 
-        if not self.box.get():
-
+        if self.box.get():
+            print("Executar!")
             # Configura o atributo alvo escolhido na combobox
-            target = self.attributes.index(self.box.get())
+            class_attribute = self.attributes.index(self.box.get())
 
             # Remove os atributos
             Matrix.extract_attributes(self.examples)
 
             # Cria instancia da classe ID3
-            id3 = ID3(self.examples, self.attributes, target)
+            id3 = ID3()
 
             # Executa o algoritmo
-            id3.execute()
+            tree = id3.execute(self.examples, self.attributes, class_attribute)
+
+            # Cria a arvore de decisao!
+            decision_tree = DecisionTree(tree)
 
 
 if __name__ == '__main__':
