@@ -1,0 +1,18 @@
+digraph {
+	node [shape=circle]
+	outlook [label=outlook]
+	humidity [label=humidity]
+	no [label=no]
+		humidity -> no [label=high]
+	yes [label=yes]
+		humidity -> yes [label=normal]
+		outlook -> humidity [label=sunny]
+	yes [label=yes]
+		outlook -> yes [label=overcast]
+	windy [label=windy]
+	no [label=no]
+		windy -> no [label=TRUE]
+	yes [label=yes]
+		windy -> yes [label=FALSE]
+		outlook -> windy [label=rainy]
+}
