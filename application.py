@@ -119,7 +119,7 @@ class Application(tk.Frame):
 
     def remove_attrib(self):
         """Remover atributo da tabela"""
-        
+
         # Identifica o atributo selecionado para remocao
         checked = (self.tree.selection()[0])[1:]
 
