@@ -133,23 +133,30 @@ class Application(tk.Frame):
     def remove_attrib(self):
         """Remover atributo da tabela"""
 
-        # Identifica o atributo selecionado para remocao
-        checked = (self.tree.selection()[0])[1:]
+        if not self.tree.selection():
+            #Mensagem de erro gerada quando tentamos remover um atributo sem escolher nenhum
+            tk.messagebox.showwarning("Nenhum atributo escolhido", "Escolha um atributo para continuar!")
+        elif len(self.attributes) <= 1:
+            #Mensagem de erro gerada quando tentamos remover o ultimo atributo
+            tk.messagebox.showwarning("Atributo nao pode ser removido", "Numero minimo de atributos atingido!")
+        else:
+            # Identifica o atributo selecionado para remocao
+            checked = (self.tree.selection()[0])[1:]
 
-        # Identifica a posicao do atributo na matriz
-        cr = int(checked)-1
+            # Identifica a posicao do atributo na matriz
+            cr = int(checked)-1
 
-        # Remove a coluna fornecidas na lista
-        Matrix.remove_columns(self.examples, [cr])
+            # Remove a coluna fornecidas na lista
+            Matrix.remove_columns(self.examples, [cr])
 
-        # Obter os nomes dos atributos restantes
-        self.attributes = Matrix.get_attributes(self.examples)
+            # Obter os nomes dos atributos restantes
+            self.attributes = Matrix.get_attributes(self.examples)
 
-        # Chama a funcao para atualizar o combobox
-        self.create_combo_box()
+            # Chama a funcao para atualizar o combobox
+            self.create_combo_box()
 
-        # Chama a funcao para atualizar a tabela
-        self.create_table()
+            # Chama a funcao para atualizar a tabela
+            self.create_table()
 
 
     def execute_id3(self):
@@ -159,7 +166,7 @@ class Application(tk.Frame):
 
         if self.box is None:
             #Mensagem de erro gerada quando tentamos executar o algoritmo sem antes escolher o arquivo
-            tk.messagebox.showwarning("Nenhum arquivo escolhido", "Escolha um arquvio para continuar!")
+            tk.messagebox.showwarning("Nenhum arquivo escolhido", "Escolha um arquivo para continuar!")
 
         elif self.box.get():
             if counter == 0:
