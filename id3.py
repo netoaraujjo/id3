@@ -11,16 +11,17 @@ class ID3(object):
 		super(ID3, self).__init__()
 
 	def execute(self, examples, attributes, class_attribute):
-		#Matrix.print_matrix(examples)
+		Matrix.print_matrix(examples)
 		#print(Matrix.get_attribute_values(examples, class_attribute))
-		if len(examples) == 0:
-			# majority_value = self.get_majority(examples, class_attribute)
-			node = Node("majority_value")
+		if len(examples[0]) == 1:
+			majority_value = self.get_majority(examples, class_attribute)
+			node = Node(majority_value)
+			print("retornando node com label:", majority_value)
 			return node
 		elif len(Matrix.get_attribute_values(examples, class_attribute)) == 1:
 			label = list(Matrix.attribute_occurrence_count(examples, class_attribute).keys())[0]
 			node = Node(label)
-			#print("retornando node com label:", label)
+			print("retornando node com label:", label)
 			return node
 		elif len(attributes) == 0:
 			majority_value = self.get_majority(examples, class_attribute)
@@ -35,7 +36,7 @@ class ID3(object):
 					class_attribute -= 1
 
 			for key, value in Matrix.attribute_occurrence_count(examples, best_attribute).items():
-				#print(attributes[best_attribute], "=>", key)
+				print(attributes[best_attribute], "=>", key)
 				new_examples = Matrix.remove_line(examples, best_attribute, key)
 				columns_to_remove = []
 				columns_to_remove.append(best_attribute)

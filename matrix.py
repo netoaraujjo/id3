@@ -30,7 +30,8 @@ class Matrix:
 			for c, column in enumerate(line):
 				if not c in columns:
 					new_line.append(column)
-			new_matrix.append(new_line)
+			if len(new_line) != 0:
+				new_matrix.append(new_line)
 		return new_matrix
 
 
