@@ -101,7 +101,8 @@ class Application(tk.Frame):
         value = StringVar()
         self.box = ttk.Combobox(self, textvariable=value, state='readonly')
         self.box['values'] = self.attributes
-        self.box.current(0)
+        if self.box['values']:
+            self.box.current(0)
         self.box.grid(column = 2, row = 0)
 
 
@@ -198,6 +199,10 @@ class Application(tk.Frame):
                 label = tk.Label(window, image=imagem)
                 label.image = imagem
                 label.grid()
+
+                self.attributes = []
+                self.create_table()
+                self.create_combo_box()
             else:
                 # Mensagem de erro gerada quando tentamos executar o algoritmo novamente
                 tk.messagebox.showwarning("Carregar o arquivo novamente", "Para executar, necessario carregar o arquivo novamente.")
