@@ -14,7 +14,12 @@ import copy
 from id3 import *
 from decision_tree import *
 
+from PIL import Image, ImageTk
+
+
 class Application(tk.Frame):
+    global counter
+    counter = 0
     """docstring for Application"""
 
 
@@ -23,6 +28,9 @@ class Application(tk.Frame):
 
         #Inicializa o Frame
         tk.Frame.__init__(self, master)
+
+        # Modifica o titulo da janela
+        master.title('ID3 Algorithm')
 
         # Seta a organizacao da janela do tipo Grid
         self.grid()
@@ -33,6 +41,8 @@ class Application(tk.Frame):
 
     def open_file(self):
         """Abre um File Dialog que retorna o nome do arquivo e chama a funcao para criar a tabela."""
+
+        global counter
 
         # Abre o FileDialog e recebe o nome do arquivo escolhido
         filename = filedialog.askopenfilename(**self.file_opt)
@@ -57,6 +67,9 @@ class Application(tk.Frame):
 
             # Chama a funcao para criar a tabela
             self.create_table()
+
+            # Variavel que controla a execucao
+            counter = 0
 
 
     def create_buttons(self):
@@ -142,26 +155,45 @@ class Application(tk.Frame):
     def execute_id3(self):
         """Funcao que executa o algoritmo id3"""
 
+        global counter
+
         if self.box is None:
             #Mensagem de erro gerada quando tentamos executar o algoritmo sem antes escolher o arquivo
             tk.messagebox.showwarning("Nenhum arquivo escolhido", "Escolha um arquvio para continuar!")
 
         elif self.box.get():
-            # Configura o atributo alvo escolhido na combobox
-            class_attribute = self.attributes.index(self.box.get())
+            if counter == 0:
 
-            # Remove os atributos
-            Matrix.extract_attributes(self.examples)
+                # Colocar o contador em 1 para evitar que o programa execute novamente
+                counter = 1
 
-            # Cria instancia da classe ID3
-            id3 = ID3()
+                # Configura o atributo alvo escolhido na combobox
+                class_attribute = self.attributes.index(self.box.get())
 
-            # Executa o algoritmo
-            tree = id3.execute(self.examples, self.attributes, class_attribute)
+                # Remove os atributos
+                Matrix.extract_attributes(self.examples)
 
-            # Cria a arvore de decisao!
-            decision_tree = DecisionTree(tree)
+                # Cria instancia da classe ID3
+                id3 = ID3()
 
+                # Executa o algoritmo
+                tree = id3.execute(self.examples, self.attributes, class_attribute)
+
+                # Cria a arvore de decisao!
+                decision_tree = DecisionTree(tree)
+
+                # Carrega a imagem
+                imagem = ImageTk.PhotoImage(Image.open("Digraph.gv.png").convert("RGB"))
+
+                # Cria uma nova janela pra exibir a arvore de decisao
+                window = tk.Toplevel(self)
+                # Cria uma label que ira conter a imagem da arvore de decisao
+                label = tk.Label(window, image=imagem)
+                label.image = imagem
+                label.grid()
+            else:
+                # Mensagem de erro gerada quando tentamos executar o algoritmo novamente
+                tk.messagebox.showwarning("Carregar o arquivo novamente", "Para executar, necessario carregar o arquivo novamente.")
         else:
             # Mensagem de erro gerada quando tentamos executar o algoritmo sem escolher o atributo classe
             tk.messagebox.showwarning("Atributo classe não escolhido", "Escolha o atributo classe para executar!")

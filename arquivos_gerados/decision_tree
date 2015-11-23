@@ -1,6 +1,0 @@
-digraph {
-	A [label=emprestimo]
-	node [shape=plaintext]
-	B [label=sim]
-		A -> B [label="Valor mais comum!"]
-}

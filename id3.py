@@ -11,7 +11,7 @@ class ID3(object):
 		super(ID3, self).__init__()
 
 	def execute(self, examples, attributes, class_attribute):
-		Matrix.print_matrix(examples)
+		#Matrix.print_matrix(examples)
 		#print(Matrix.get_attribute_values(examples, class_attribute))
 		if len(examples) == 0:
 			# majority_value = self.get_majority(examples, class_attribute)

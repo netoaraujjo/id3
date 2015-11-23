@@ -16,14 +16,14 @@ class DecisionTree(object):
 		self.tree = tree
 
 		global dot
-		dot = Digraph()
+		dot = Digraph(format='png')
 		dot.attr('node', shape='circle')
 
 		# Chama o metodo de criacao da arvore de decisao
 		self.build_tree(tree)
 
 		# Renderiza a arvore de decisao
-		dot.view()
+		dot.render(view=False, cleanup=False)
 
 
 	def build_tree(self, node):
