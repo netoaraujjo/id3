@@ -44,6 +44,7 @@ class DecisionTree(object):
 			# Verifica se o no tem filhos
 			if node.get_childrens() is not []:
 				# Cria uma lista de filhos
+				counter += 1
 				childrens = node.get_childrens()
 				#Percorre o dicionario de filhos
 				for child in childrens.keys():
