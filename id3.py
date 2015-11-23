@@ -15,7 +15,7 @@ class ID3(object):
 		#print(Matrix.get_attribute_values(examples, class_attribute))
 		if len(examples[0]) == 1:
 			majority_value = self.get_majority(examples, class_attribute)
-			node = Node(majority_value)
+			node = Node(majori
 			print("retornando node com label:", majority_value)
 			return node
 		elif len(Matrix.get_attribute_values(examples, class_attribute)) == 1:
