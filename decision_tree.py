@@ -19,7 +19,7 @@ class DecisionTree(object):
 		dot = Digraph(format='png')
 		dot.attr('node', shape='circle')
 
-		# Contador do node
+		# Contador do node para gerar nos diferentes com o mesmo label
 		counter = 0
 
 		# Chama o metodo de criacao da arvore de decisao
@@ -38,6 +38,7 @@ class DecisionTree(object):
 		if node.get_label() is not None:
 			# Cria o no na interface
 			father_label = node.get_label() + str(counter)
+			# Incrementa o label
 			counter += 1
 			dot.node(father_label, node.get_label())
 			# Verifica se o no tem filhos
@@ -48,6 +49,8 @@ class DecisionTree(object):
 				for child in childrens.keys():
 					# Cria um no filho
 					child_label = childrens.get(child)
+					# Incrementa o label
+					counter += 1
 					# Chama o metodo pra criar a arvore de decisao com o no filho
 					self.build_tree(childrens.get(child), counter)
 					# Cria a ligacao entre o no pai e o no filho na interface
