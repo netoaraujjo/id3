@@ -60,6 +60,10 @@ class Matrix:
 
 	@staticmethod
 	def remove_attribute(attributes, attr_index):
+		"""
+		Remove um atributo da lista de atributos.
+		A lista original nao e alterada.
+		"""
 		new_attr = []
 		for i, attr in enumerate(attributes):
 			if i != attr_index:
@@ -120,7 +124,6 @@ class Matrix:
 		return occurrences
 
 
-
 	@staticmethod
 	def get_attribute_values(matrix, class_attribute_index):
 		"""Retorna os valores possiveis para o attributo classe"""
@@ -129,8 +132,6 @@ class Matrix:
 			values.append(line[class_attribute_index])
 		return list(set(values))
 
-
-		
 
 	@staticmethod
 	def print_matrix(matrix):

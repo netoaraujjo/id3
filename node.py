@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 
 class Node:
-	"""docstring for Node"""
+	"""Representa a estrutura de um no da arvore de decisao"""
 	def __init__(self, label):
+		"""Construtor da classe Node"""
 		self.label = label
 		self.childrens = {}
 
@@ -24,5 +25,6 @@ class Node:
 
 
 	def __str__(self):
+		"""Retorna uma representacao em string do no"""
 		node_str = self.label
 		return node_str
