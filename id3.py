@@ -10,6 +10,7 @@ class ID3(object):
 	def __init__(self):
 		super(ID3, self).__init__()
 
+
 	def execute(self, examples, attributes, class_attribute):
 		Matrix.print_matrix(examples)
 		if len(examples[0]) == 1: # Se examples e vazio (a unica coluna e a do atributo classe )
@@ -17,12 +18,12 @@ class ID3(object):
 			node = Node(majority_value)
 			print("retornando node com label:", majority_value)
 			return node # Retorna ocorrencia mais frequente do atributo class
-		elif len(Matrix.get_attribute_values(examples, class_attribute)) == 1: (Se todos os examples tem a mesma classificacao)
+		elif len(Matrix.get_attribute_values(examples, class_attribute)) == 1: # (Se todos os examples tem a mesma classificacao)
 			label = list(Matrix.attribute_occurrence_count(examples, class_attribute).keys())[0]
 			node = Node(label)
 			print("retornando node com label:", label)
 			return node # Retorna a classificacao
-		elif len(attributes) == 0: # Se atributos e vazio retorna a ocorrencia mais frequente do attributo classe
+		elif len(attributes) == 1: # Se atributos e vazio retorna a ocorrencia mais frequente do attributo classe
 			majority_value = self.get_majority(examples, class_attribute)
 			node = Node(majority_value)
 			print("retornando node com label:", majority_value)
@@ -52,6 +53,8 @@ class ID3(object):
 		for attr_index, attribute in enumerate(attributes):
 			if attr_index != class_attribute: # Verifica se nao e o atributo classe
 				gains.append(self.gain(attr_index, examples, class_attribute))
+			else:
+				gains.append(-1000)
 
 		return gains.index(max(gains))
 
